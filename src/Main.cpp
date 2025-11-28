@@ -1,26 +1,17 @@
-#include "Pin.hpp"
-#include <util/delay.h>
-
+#include "Blinking.hpp"
 
 int main()
 {
-  pin::pb3 led;
+  Blinking b;
   pin::pd5 btn;
-
-  led.setOutput();
-  btn.setInput();
 
   while(1) {
     if(btn.read()) {
-      led.high();
+      b.Blink1();
     }
     else {
-      led.low();
+      b.Blink2();
     }
-
-    for (int i = 0; i < 100; i++) {
-      led.toggle();
-      _delay_ms(100);
-    }
+    b.Update();
   }
 }
