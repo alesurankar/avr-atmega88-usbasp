@@ -7,10 +7,10 @@ int main()
 
   while(1) {
     if(btn.read()) {
-      b.Blink1();
+      b.Blink(Blinking::TYPE::BL1);
     }
     else {
-      b.Blink2();
+      b.Blink(Blinking::TYPE::BL2);
     }
     b.Update();
   }
