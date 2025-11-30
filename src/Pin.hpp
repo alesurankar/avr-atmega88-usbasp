@@ -7,27 +7,27 @@ namespace pin
   class Pin
   {
     public:
-      inline void setOutput()
+      static inline void SetOutput()
       {
           ddr() |= (1 << BIT);
       }
-      inline void setInput()
+      static inline void SetInput()
       {
           ddr() &= ~(1 << BIT);
       }
-      inline void high()
+      inline void High()
       {
           port() |= (1 << BIT);
       }
-      inline void low()
+      inline void Low()
       {
           port() &= ~(1 << BIT);
       }
-      inline void toggle()
+      inline void Toggle()
       {
           port() ^= (1 << BIT);
       }
-      inline bool read()
+      inline bool Read()
       {
           return pinreg() & (1 << BIT);
       }
@@ -65,7 +65,6 @@ namespace pin
   using pc4 = Pin<'C', 4>;
   using pc5 = Pin<'C', 5>;
   using pc6 = Pin<'C', 6>;
-  using pc7 = Pin<'C', 7>;
   using pd1 = Pin<'D', 1>;
   using pd2 = Pin<'D', 2>;
   using pd3 = Pin<'D', 3>;
