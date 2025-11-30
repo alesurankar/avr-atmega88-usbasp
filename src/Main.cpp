@@ -5,7 +5,8 @@
 
 int main()
 {
-  PWM<pin::pb3> pwm(128);
+  PWM<pin::pb3> pwm1;
+  pwm1.InitTimer(100);
   Blinking b;
   pin::pd5 btn;
 
