@@ -32,28 +32,42 @@ public:
     }
 private:
     static void Timer0_PB3(uint8_t duty) {  //////////////// Timer0 OC0A
-        TCCR0A = (1 << COM0A1) | (1 << WGM00) | (1 << WGM01);
-        TCCR0B = (1 << CS01) | (1 << CS00);
+        TCCR0A &= ~((1 << COM0A1) | (1 << COM0A0));
+        TCCR0A |= (1 << COM0A1) | (1 << WGM00) | (1 << WGM01);
+        TCCR0B |= (1 << CS01) | (1 << CS00);
         OCR0A = duty;
     }
     static void Timer0_PB4(uint8_t duty) {  //////////////// Timer0 OC0B
-        TCCR0A = (1 << COM0B1) | (1 << WGM00) | (1 << WGM01);
-        TCCR0B = (1 << CS01) | (1 << CS00);
+        TCCR0A &= ~((1 << COM0B1) | (1 << COM0B0));
+        TCCR0A |= (1 << COM0B1) | (1 << WGM00) | (1 << WGM01);
+        TCCR0B |= (1 << CS01) | (1 << CS00);
         OCR0B = duty;
     }
     static void Timer1_PD4(uint8_t duty) {  //////////////// Timer1 OC1B
-        TCCR1A = (1 << COM1B1) | (1 << WGM10);
-        TCCR1B = (1 << WGM12) | (1 << CS11);
+        TCCR1A &= ~((1 << COM1B1) | (1 << COM1B0));
+        TCCR1A |= (1 << COM1B1) | (1 << WGM10);
+        TCCR1B |= (1 << WGM12) | (1 << CS11);
         OCR1B = duty;
     }
     static void Timer1_PD5(uint8_t duty) {  //////////////// Timer1 OC1A
-        TCCR1A = (1 << COM1A1) | (1 << WGM10);
-        TCCR1B = (1 << WGM12) | (1 << CS11);
+        TCCR1A &= ~((1 << COM1A1) | (1 << COM1A0));
+        TCCR1A |= (1 << COM1A1) | (1 << WGM10);
+        TCCR1B |= (1 << WGM12) | (1 << CS11);
         OCR1A = duty;
     }
+    #if defined(__AVR_ATmega8__)
     static void Timer2_PD7(uint8_t duty) {  //////////////// Timer2 OC2
-        TCCR2A = (1 << COM2A0) | (1 << WGM20) | (1 << WGM21);
-        TCCR2A |= (1 << CS22);
+        TCCR2 &= ~((1 << COM21) | (1 << COM20));
+        TCCR2 |= (1 << COM21) | (1 << WGM20) | (1 << WGM21);
+        TCCR2 |= (1 << CS22);
+        OCR2 = duty;
+    }
+    #elif defined(__AVR_ATmega88__)
+    static void Timer2_PD7(uint8_t duty) {  //////////////// Timer2 OC2
+        TCCR2A &= ~((1 << COM2A1) | (1 << COM2A0));
+        TCCR2A |= (1 << COM2A1) | (1 << WGM20) | (1 << WGM21);
+        TCCR2B |= (1 << CS22);
         OCR2A = duty;
     }
+    #endif
 };
