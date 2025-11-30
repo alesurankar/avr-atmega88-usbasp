@@ -17,5 +17,5 @@ private:
     pin::pb3 led;
     TYPE type;
     int blinkCounter;
-    bool ledOn;;
+    bool ledOn;
 };

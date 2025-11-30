@@ -39,16 +39,28 @@ void Blinking::Prog1() {
 void Blinking::Prog2() {
     if(blinkCounter <= 2000) {
         if(blinkCounter <= 1000) {
-            led.High();
+            if(!ledOn) {
+                led.High();
+                ledOn = true;
+            }
         }
         else if (blinkCounter > 1000 && blinkCounter <= 1333) {
-            led.Low();
+            if(ledOn) {
+                led.Low();
+                ledOn = false;
+            }
         }
         else if (blinkCounter > 1333 && blinkCounter <= 1666) {
-            led.High();
+            if(!ledOn) {
+                led.High();
+                ledOn = true;
+            }
         }
         else {
-            led.Low();
+            if(ledOn) {
+                led.Low();
+                ledOn = false;
+            }
         }
     }
     else {
