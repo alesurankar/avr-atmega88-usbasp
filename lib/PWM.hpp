@@ -1,5 +1,5 @@
 #pragma once
-#include "Pin.hpp"
+#include "../lib/Pin.hpp"
 #include <avr/io.h>
 
 template<typename PinT>

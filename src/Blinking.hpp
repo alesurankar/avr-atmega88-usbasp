@@ -1,4 +1,4 @@
-#include "Pin.hpp"
+#include "../lib/Pin.hpp"
 
 class Blinking 
 {
