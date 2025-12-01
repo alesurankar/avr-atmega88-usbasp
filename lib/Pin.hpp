@@ -60,10 +60,8 @@ namespace pin
 
     // MCU-specific aliases
     #if defined(__AVR_ATmega8__)
-    #include "../include/ATMega8_pins.hpp"
+    #include "../include/pins/ATMega8_pins.hpp"
     #elif defined(__AVR_ATmega88__)
-    #include "../include/ATMega88_pins.hpp"
-    #elif defined(__AVR_ATmega32__)
-    #include "../include/ATMega32_pins.hpp"
+    #include "../include/pins/ATMega88_pins.hpp"
     #endif
 }
