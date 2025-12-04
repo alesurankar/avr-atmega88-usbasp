@@ -30,27 +30,27 @@ void Blinking::Update() {
 
 // private section
 void Blinking::Prog1() {
-    if(blinkCounter >= 100) {
+    if(blinkCounter >= 10) {
         led.Toggle();
         blinkCounter = 0;
     }
 }
 
 void Blinking::Prog2() {
-    if(blinkCounter <= 2000) {
-        if(blinkCounter <= 1000) {
+    if(blinkCounter <= 200) {
+        if(blinkCounter <= 100) {
             if(!ledOn) {
                 led.High();
                 ledOn = true;
             }
         }
-        else if (blinkCounter > 1000 && blinkCounter <= 1333) {
+        else if (blinkCounter > 100 && blinkCounter <= 133) {
             if(ledOn) {
                 led.Low();
                 ledOn = false;
             }
         }
-        else if (blinkCounter > 1333 && blinkCounter <= 1666) {
+        else if (blinkCounter > 133 && blinkCounter <= 166) {
             if(!ledOn) {
                 led.High();
                 ledOn = true;

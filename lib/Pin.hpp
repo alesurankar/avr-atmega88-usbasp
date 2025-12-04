@@ -30,7 +30,7 @@ namespace pin
         inline bool Read()
         {
             return PinReg() & (1 << BIT);
-        }
+        }          ////////////////////// pin connected to ground == true
     private:
         static inline volatile uint8_t& Ddr()
         {
@@ -50,7 +50,7 @@ namespace pin
         {
             if constexpr (PORT == 'B') return PINB;
             else if constexpr (PORT == 'C') return PINC;
-            else if constexpr (PORT == 'D') return PORTD;
+            else if constexpr (PORT == 'D') return PIND;
             else static_assert([] {return false; }(), "INVALID PORT: must be 'B', 'C', or 'D'");
         }
     public:
@@ -61,7 +61,7 @@ namespace pin
     // MCU-specific aliases
     #if defined(__AVR_ATmega8__)
     #include "../include/pins/ATMega8_pins.hpp"
-    #elif defined(__AVR_ATmega88__)
-    #include "../include/pins/ATMega88_pins.hpp"
+    #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__) 
+    #include "../include/pins/ATMega168_pins.hpp"
     #endif
 }

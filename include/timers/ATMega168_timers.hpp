@@ -59,3 +59,22 @@ static void Timer2B(uint8_t duty) {  //////////////// OCR2B
     // Set duty cycle
     OCR2B = duty;
 }
+
+static void SetDutyCycle0A(uint8_t duty) {
+    OCR0A = duty;
+}
+static void SetDutyCycle0B(uint8_t duty) {
+    OCR0B = duty;
+}
+static void SetDutyCycle1A(uint8_t duty) {
+    OCR1A = duty;
+}
+static void SetDutyCycle1B(uint8_t duty) {
+    OCR1B = duty;
+}
+static void SetDutyCycle2A(uint8_t duty) {
+    OCR2A = duty;
+}
+static void SetDutyCycle2B(uint8_t duty) {
+    OCR2B = duty;
+}

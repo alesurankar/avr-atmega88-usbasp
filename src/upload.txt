@@ -1,0 +1,14 @@
+// for Atmega168
+
+& "C:\Users\Uporabnik\.platformio\packages\tool-avrdude\avrdude.exe" `
+  -c usbasp -p m168 -B 10 `
+  -U flash:w:"C:\Users\Uporabnik\Documents\PlatformIO\Projects\proj1\.pio\build\atmega168\firmware.hex":i
+
+
+
+
+// for Atmega88
+
+& "C:\Users\Uporabnik\.platformio\packages\tool-avrdude\avrdude.exe" `
+  -c usbasp -p m88 -B 10 `
+  -U flash:w:"C:\Users\Uporabnik\Documents\PlatformIO\Projects\proj1\.pio\build\atmega88\firmware.hex":i

@@ -14,7 +14,7 @@ private:
     void Prog1();
     void Prog2();
 private:
-    pin::pb3 led;
+    pin::pd7 led;
     TYPE type;
     int blinkCounter;
     bool ledOn;
