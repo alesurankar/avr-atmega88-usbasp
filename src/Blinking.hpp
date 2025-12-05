@@ -8,7 +8,7 @@ public:
         BL2
     };
     Blinking();
-    void Blink(TYPE type_in);
+    void Blink(TYPE type);
     void Update();
 private:
     void Prog1();
