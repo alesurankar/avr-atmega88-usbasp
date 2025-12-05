@@ -3,76 +3,116 @@
 #include <avr/io.h>
 
 
-template<typename PinT>
-class PWM
+namespace pwm
 {
-public:
-    PWM() 
-    {
-        PinT::SetOutput();
-    }
-    void InitTimer()
-    {
-        uint8_t duty = 255;
-        if constexpr (PinT::port == 'D' && PinT::bit == 6) {
-            Timer0A(duty);
-        }
-        else if constexpr (PinT::port == 'D' && PinT::bit == 5) {
-            Timer0B(duty);
-        }
-        else if constexpr (PinT::port == 'B' && PinT::bit == 1) {
-            Timer1A(duty);
-        }
-        else if constexpr (PinT::port == 'B' && PinT::bit == 2) {
-            Timer1B(duty);
-        }
-        #if defined(__AVR_ATmega8__)
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                Timer2(duty);
-            }
-        #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                Timer2A(duty);
-            }
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                Timer2B(duty);
-            }
-        #endif
-        else static_assert(sizeof(PinT) == 0, "PWM: Unsupported pin");
-    }
-    void SetDutyCycle(uint8_t duty) 
-    {
-         if constexpr (PinT::port == 'D' && PinT::bit == 6) {
-            SetDutyCycle0A(duty);
-        }
-        else if constexpr (PinT::port == 'D' && PinT::bit == 5) {
-            SetDutyCycle0B(duty);
-        }
-        else if constexpr (PinT::port == 'B' && PinT::bit == 1) {
-            SetDutyCycle1A(duty);
-        }
-        else if constexpr (PinT::port == 'B' && PinT::bit == 2) {
-            SetDutyCycle1B(duty);
-        }
-        #if defined(__AVR_ATmega8__)
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                SetDutyCycle2(duty);
-            }
-        #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                SetDutyCycle02A(duty);
-            }
-            else if constexpr (PinT::port == 'B' && PinT::bit == 3) {
-                SetDutyCycle2B(duty);
-            }
-        #endif
-        else static_assert(sizeof(PinT) == 0, "PWM: Unsupported pin");
-    }
-private:
-private:
     #if defined(__AVR_ATmega8__)
     #include "../include/timers/ATMega8_timers.hpp"
     #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
     #include "../include/timers/ATMega168_timers.hpp"
     #endif
+
+    template<int Timer, char Channel>
+    struct PWMTraits;
+
+    // TIMER0 A  (PD6)
+    template<>
+    struct PWMTraits<0, 'A'>
+    {
+        static inline void init(uint8_t d) { Timer0A(d); }
+        static inline void set (uint8_t d) { SetDutyCycle0A(d); }
+    };
+
+    // TIMER0 B  (PD5)
+    template<>
+    struct PWMTraits<0, 'B'>
+    {
+        static inline void init(uint8_t d) { Timer0B(d); }
+        static inline void set (uint8_t d) { SetDutyCycle0B(d); }
+    };
+
+    // TIMER1 A  (PB1)
+    template<>
+    struct PWMTraits<1, 'A'>
+    {
+        static inline void init(uint8_t d) { Timer1A(d); }
+        static inline void set (uint8_t d) { SetDutyCycle1A(d); }
+    };
+
+    // TIMER1 B  (PB2)
+    template<>
+    struct PWMTraits<1, 'B'>
+    {
+        static inline void init(uint8_t d) { Timer1B(d); }
+        static inline void set (uint8_t d) { SetDutyCycle1B(d); }
+    };
+
+    // TIMER2 A  (PB3)
+    template<>
+    struct PWMTraits<2, 'A'>
+    {
+        static inline void init(uint8_t d) { Timer2A(d); }
+        static inline void set (uint8_t d) { SetDutyCycle2A(d); }
+    };
+
+    // TIMER2 B  (PD3)
+    template<>
+    struct PWMTraits<2, 'B'>
+    {
+        static inline void init(uint8_t d) { Timer2B(d); }
+        static inline void set (uint8_t d) { SetDutyCycle2B(d); }
+    };
+
+
+    template<char PORT, uint8_t BIT>
+    struct PWMSelect;
+
+    template<>
+    struct PWMSelect<'D', 6> { static constexpr int timer = 0; static constexpr char channel = 'A'; };
+
+    template<>
+    struct PWMSelect<'D', 5> { static constexpr int timer = 0; static constexpr char channel = 'B'; };
+
+    template<>
+    struct PWMSelect<'B', 1> { static constexpr int timer = 1; static constexpr char channel = 'A'; };
+
+    template<>
+    struct PWMSelect<'B', 2> { static constexpr int timer = 1; static constexpr char channel = 'B'; };
+    
+    template<>
+    struct PWMSelect<'B', 3> { static constexpr int timer = 2; static constexpr char channel = 'A'; };
+    
+    template<>
+    struct PWMSelect<'D', 3> { static constexpr int timer = 2; static constexpr char channel = 'B'; };
+
+
+    template<char PORT, uint8_t BIT>
+    class PWM
+    {
+    public:
+        PWM() 
+        { 
+            pin::Pin<PORT, BIT>::SetOutput(); 
+        }
+
+        static inline void InitTimer()
+        {
+            constexpr int T  = PWMSelect<PORT, BIT>::timer;
+            constexpr char C = PWMSelect<PORT, BIT>::channel;
+            PWMTraits<T, C>::init(255);
+        }
+
+        static inline void SetDutyCycle(uint8_t duty)
+        {
+            constexpr int T  = PWMSelect<PORT, BIT>::timer;
+            constexpr char C = PWMSelect<PORT, BIT>::channel;
+            PWMTraits<T, C>::set(duty);
+        }
+    };
+
+    using pd5 = PWM<'D', 5>;
+    using pd6 = PWM<'D', 6>;
+    using pb1 = PWM<'B', 1>;
+    using pb2 = PWM<'B', 2>;
+    using pb3 = PWM<'B', 3>;
+    using pd3 = PWM<'D', 3>;
 };

@@ -3,7 +3,7 @@
 
 int main()
 {
-  PWM<pin::pd5> pwm1;
+  pwm::pd5 pwm1;
   pwm1.InitTimer();
   // Blinking b;
    pin::pd7 btn;
