@@ -18,7 +18,7 @@ namespace pwm
     template<>
     struct PWMTraits<0, 'A'>
     {
-        static inline void init(uint8_t d) { Timer0A(d); }
+        static inline void init() { Timer0A(); }
         static inline void set (uint8_t d) { SetDutyCycle0A(d); }
     };
 
@@ -26,7 +26,7 @@ namespace pwm
     template<>
     struct PWMTraits<0, 'B'>
     {
-        static inline void init(uint8_t d) { Timer0B(d); }
+        static inline void init() { Timer0B(); }
         static inline void set (uint8_t d) { SetDutyCycle0B(d); }
     };
 
@@ -34,7 +34,7 @@ namespace pwm
     template<>
     struct PWMTraits<1, 'A'>
     {
-        static inline void init(uint8_t d) { Timer1A(d); }
+        static inline void init() { Timer1A(); }
         static inline void set (uint8_t d) { SetDutyCycle1A(d); }
     };
 
@@ -42,7 +42,7 @@ namespace pwm
     template<>
     struct PWMTraits<1, 'B'>
     {
-        static inline void init(uint8_t d) { Timer1B(d); }
+        static inline void init() { Timer1B(); }
         static inline void set (uint8_t d) { SetDutyCycle1B(d); }
     };
 
@@ -50,7 +50,7 @@ namespace pwm
     template<>
     struct PWMTraits<2, 'A'>
     {
-        static inline void init(uint8_t d) { Timer2A(d); }
+        static inline void init() { Timer2A(); }
         static inline void set (uint8_t d) { SetDutyCycle2A(d); }
     };
 
@@ -58,7 +58,7 @@ namespace pwm
     template<>
     struct PWMTraits<2, 'B'>
     {
-        static inline void init(uint8_t d) { Timer2B(d); }
+        static inline void init() { Timer2B(); }
         static inline void set (uint8_t d) { SetDutyCycle2B(d); }
     };
 
@@ -98,10 +98,10 @@ namespace pwm
         {
             constexpr int T  = PWMSelect<PORT, BIT>::timer;
             constexpr char C = PWMSelect<PORT, BIT>::channel;
-            PWMTraits<T, C>::init(255);
+            PWMTraits<T, C>::init();
         }
 
-        static inline void SetDutyCycle(uint8_t duty)
+        static inline void SetDutyCycle(uint8_t duty) // max duty: (pb1,pb2-65535), (pb3,pd3,pd5,pd6-255)
         {
             constexpr int T  = PWMSelect<PORT, BIT>::timer;
             constexpr char C = PWMSelect<PORT, BIT>::channel;

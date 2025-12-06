@@ -23,6 +23,15 @@ namespace pin
         {
             Port() &= ~(1 << BIT);
         }
+        inline void SetState(bool state)
+        {
+            if(state) {
+                High();
+            }
+            else {
+                Low();
+            }
+        }
         inline void Toggle()
         {
             Port() ^= (1 << BIT);
