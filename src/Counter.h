@@ -18,10 +18,10 @@ public:
     }
     void Count() {
         if (increment) {
-            Increment(1);
+            Increment(0.6f);
         }
         else {
-            Decrement(1);
+            Decrement(0.6f);
         }
         SetOutput();
         _delay_ms(1);
@@ -56,43 +56,56 @@ public:
         }
     }
 private:
-    void Increment(int val) {
-        if (bright > 100) {
-            bright += (2*val);
-        }
-        else {
+    void Increment(float val) {
+        if (bright < 30.0f) {
             bright += val;
         }
-        if (bright >= 254) {
+        else if (bright >= 30.0f && bright < 100.0f) {
+            bright += (2*val);
+        }
+        else if (bright >= 100.0f && bright < 165.0f){
+            bright += (5*val);
+        }
+        else  {
+            bright += (9*val);
+        }
+        if (bright >= 250.0f) {
             counter++;
             if (counter > 3) {
-                Reverse();
                 counter = 3;
+                Reverse();
             }
             else {
-                bright = 0;
+                bright = 0.0f;
             }
             change = true;
-            _delay_ms(500);
+            _delay_ms(20);
             
         }
     }
-    void Decrement(int val) {
-        if (bright > 100) {
-            bright -= (2*val);
+    void Decrement(float val) {
+        if (bright >= 185.0f) {
+            bright -= (9*val);
         } 
+        if (bright >= 100.0f && bright < 175.0f) {
+            bright -= (5*val);
+        } 
+        else if (bright >= 20.0f && bright < 100.0f) {
+            bright -= (2*val);
+        }
         else {
             bright -= val;
         }
-        if (bright < 2) {
+        if (bright <= 0.5f) {
             counter--;
-            _delay_ms(500);
             if (counter < 0) {
+                counter = 0;
                 Reverse();
-                counter=0;
+                _delay_ms(20);
             }
             else {
-                bright = 255;
+                bright = 255.0f;
+                _delay_ms(20);
             }
             change = true;
         }
@@ -105,7 +118,7 @@ private:
     pin::pd6 bit1;
     pin::pd7 bit2;
     int counter = 0;
-    int bright = 0;
+    float bright = 0.0f;
     bool increment = true;
     bool change = true;
 };
