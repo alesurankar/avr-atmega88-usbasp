@@ -6,8 +6,8 @@
 
 int main()
 {
-  static constexpr uint16_t DEBOUNCE_COUNT = 100;
-  static uint16_t debounceCounter = 0;
+  //static constexpr uint16_t DEBOUNCE_COUNT = 100;
+  //static uint16_t debounceCounter = 0;
   //Counter count;
   int i = 0;
   bool btn1Pressed = false;
