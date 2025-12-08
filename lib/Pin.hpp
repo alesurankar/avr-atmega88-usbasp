@@ -11,27 +11,27 @@ namespace pin
         {
             Ddr() |= (1 << BIT);
         }
-        static inline void SetAsInput()
+        static inline void SetAsInput() // input + internal pull-up
+        {
+            SetAsInputFloating();
+            High();
+        }
+        static inline void SetAsInputFloating()
         {
             Ddr() &= ~(1 << BIT);
         }
         inline void SetState(bool state)
         {
-            if(state) {
-                High();
-            }
-            else {
-                Low();
-            }
+            state ? High() : Low();
         }
         inline void ToggleState()
         {
             Port() ^= (1 << BIT);
         }
-        inline bool ReadState()
+        inline bool ReadState() // pin connected to ground == true
         {
-            return PinReg() & (1 << BIT);
-        }          ////////////////////// pin connected to ground == true
+            return !(PinReg() & (1 << BIT));
+        }
     private:
         static inline void High()
         {
