@@ -8,7 +8,7 @@ Blinking::Blinking()
     blinkCounter(0),
     ledOn(false)
 {
-    led.SetOutput();
+    led.SetAsOutput();
 }
 
 void Blinking::Blink(TYPE type_in) {
@@ -31,7 +31,7 @@ void Blinking::Update() {
 // private section
 void Blinking::Prog1() {
     if(blinkCounter >= 10) {
-        led.Toggle();
+        led.ToggleState();
         blinkCounter = 0;
     }
 }
@@ -40,25 +40,25 @@ void Blinking::Prog2() {
     if(blinkCounter <= 200) {
         if(blinkCounter <= 100) {
             if(!ledOn) {
-                led.High();
+                led.SetState(true);
                 ledOn = true;
             }
         }
         else if (blinkCounter > 100 && blinkCounter <= 133) {
             if(ledOn) {
-                led.Low();
+                led.SetState(false);
                 ledOn = false;
             }
         }
         else if (blinkCounter > 133 && blinkCounter <= 166) {
             if(!ledOn) {
-                led.High();
+                led.SetState(true);
                 ledOn = true;
             }
         }
         else {
             if(ledOn) {
-                led.Low();
+                led.SetState(false);
                 ledOn = false;
             }
         }

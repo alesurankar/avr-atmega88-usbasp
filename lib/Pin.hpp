@@ -7,21 +7,13 @@ namespace pin
     class Pin
     {
     public:
-        static inline void SetOutput()
+        static inline void SetAsOutput()
         {
             Ddr() |= (1 << BIT);
         }
-        static inline void SetInput()
+        static inline void SetAsInput()
         {
             Ddr() &= ~(1 << BIT);
-        }
-        inline void High()
-        {
-            Port() |= (1 << BIT);
-        }
-        inline void Low()
-        {
-            Port() &= ~(1 << BIT);
         }
         inline void SetState(bool state)
         {
@@ -32,15 +24,23 @@ namespace pin
                 Low();
             }
         }
-        inline void Toggle()
+        inline void ToggleState()
         {
             Port() ^= (1 << BIT);
         }
-        inline bool Read()
+        inline bool ReadState()
         {
             return PinReg() & (1 << BIT);
         }          ////////////////////// pin connected to ground == true
     private:
+        static inline void High()
+        {
+            Port() |= (1 << BIT);
+        }
+        static inline void Low()
+        {
+            Port() &= ~(1 << BIT);
+        }
         static inline volatile uint8_t& Ddr()
         {
             if constexpr (PORT == 'B') return DDRB;

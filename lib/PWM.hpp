@@ -91,7 +91,7 @@ namespace pwm
     public:
         PWM() 
         { 
-            pin::Pin<PORT, BIT>::SetOutput(); 
+            pin::Pin<PORT, BIT>::SetAsOutput(); 
         }
 
         static inline void InitTimer()
