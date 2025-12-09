@@ -19,7 +19,6 @@ namespace delay
         TCCR2A = (1 << WGM21);  // CTC
         TCCR2B = 0;             // stopped
         TIMSK2 = (1 << OCIE2A); // enable interrupt
-        PRR |= (1 << PRADC) | (1 << PRTIM0) | (1 << PRTIM1); 
         sei();
     }
 

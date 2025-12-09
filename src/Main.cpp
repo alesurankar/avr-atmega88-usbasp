@@ -1,7 +1,6 @@
 //#include "Counter.h"
 #include "../lib/Pin.hpp"
 //#include "../lib/PWM.hpp"
-//#include <util/delay.h>
 #include "../lib/Delay.hpp"
 
 int main()

@@ -5,9 +5,7 @@
 
 namespace pwm
 {
-    #if defined(__AVR_ATmega8__)
-    #include "../include/timers/ATMega8_timers.hpp"
-    #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
+    #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega88__)
     #include "../include/timers/ATMega168_timers.hpp"
     #endif
 
