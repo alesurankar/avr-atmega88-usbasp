@@ -1,45 +1,64 @@
+#pragma once
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
-volatile bool timerFlag = false;
-
-template<uint8_t TIMER_NUM>
-void Timer_Init_CTC_1ms()
+namespace delay
 {
-    // Registers depend on timer number
-    volatile uint8_t &TCCRA = CAT3(TCCR, TIMER_NUM, A);
-    volatile uint8_t &TCCRB = CAT3(TCCR, TIMER_NUM, B);
-    volatile uint8_t &OCR   = CAT3(OCR,  TIMER_NUM, A);
-    volatile uint8_t &TIMSK = CAT3(TIMSK, TIMER_NUM, );
+    volatile bool timerFlag = false;
 
-    // --- CTC MODE ---
-    TCCRA = (1 << WGM01);           // WGM01 = 1 → CTC
-    TCCRB = (1 << CS01) | (1 << CS00);  // Prescaler = 64
+    ISR(TIMER2_COMPA_vect) 
+    {
+        timerFlag = true;
+    }
 
-    // --- 1ms compare match (16MHz/64 → 250kHz → 1ms = 250 ticks) ---
-    OCR = 249;
+    void Timer2_Setup()
+    {
+        TCCR2A = (1 << WGM21);  // CTC
+        TCCR2B = 0;             // stopped
+        TIMSK2 = (1 << OCIE2A); // enable interrupt
+        PRR |= (1 << PRADC) | (1 << PRTIM0) | (1 << PRTIM1); 
+        sei();
+    }
 
-    // Enable interrupt
-    TIMSK |= (1 << OCIE0A);   // Note: OCIE0A / OCIE1A / OCIE2A expand properly
+    inline void sleep_ms(uint32_t ms)
+    {
+        // Timer prescaler
+        const uint16_t prescaler = 1024;
 
-    sei();
-}
+        // tick_ms = milliseconds per timer tick (integer math)
+        const uint32_t tick_us = (prescaler * 1000000UL) / F_CPU;
 
-ISR(TIMER0_COMPA_vect) { timerFlag = true; }
-ISR(TIMER1_COMPA_vect) { timerFlag = true; }
-ISR(TIMER2_COMPA_vect) { timerFlag = true; }
+        // Max chunk in microseconds (Timer2 max = 255 ticks)
+        const uint32_t max_chunk_us = tick_us * 255;
 
-void sleep_ms(uint16_t ms)
-{
-    for (uint16_t i = 0; i < ms; i++) {
-        timerFlag = false;
+        while (ms > 0) {
+            uint32_t chunk_ms = (ms > (max_chunk_us / 1000UL)) ? (max_chunk_us / 1000UL) : ms;
+            ms -= chunk_ms;
 
-        set_sleep_mode(SLEEP_MODE_IDLE);
-        sleep_enable();
-        sleep_cpu();    // sleeps until ISR fires
-        sleep_disable();
+            // Convert chunk to OCR ticks
+            uint16_t chunk_us = chunk_ms * 1000UL;
+            uint8_t ocr = (chunk_us + tick_us - 1) / tick_us; // ceil division
+            if (ocr == 0) {
+                ocr = 1;
+            } 
 
-        while (!timerFlag); // extra safety
+            timerFlag = false;
+            OCR2A = ocr;
+
+            // Start Timer2 with prescaler 1024
+            TCCR2B = (1 << CS22) | (1 << CS21) | (1 << CS20);
+
+            // Sleep in Power-save mode
+            set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+            sleep_enable();
+            sleep_cpu();
+            sleep_disable();
+
+            while (!timerFlag);  // wait until timer ISR sets flag
+
+            // Stop timer
+            TCCR2B = 0;
+        }
     }
 }
