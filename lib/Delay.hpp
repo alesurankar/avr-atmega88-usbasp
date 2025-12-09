@@ -6,10 +6,12 @@
 namespace delay
 {
     volatile bool timerFlag = false;
+    volatile uint32_t ms_counter = 0; // total elapsed ms
 
     ISR(TIMER2_COMPA_vect) 
     {
         timerFlag = true;
+        ms_counter++; // increment global ms counter
     }
 
     void Timer2_Setup()
@@ -59,6 +61,26 @@ namespace delay
 
             // Stop timer
             TCCR2B = 0;
+        }
+    }
+
+    uint32_t Mark()
+    {
+        static uint32_t last_ms = 0;
+        uint32_t now = ms_counter;
+        uint32_t delta = now - last_ms;
+        last_ms = now;
+        return delta; // in ms
+    }
+
+    void MaxFreq(uint32_t frequency) // max 1000Hz, min 1Hz
+    {
+        uint32_t dt_ms = Mark();
+        uint32_t dt_us = 1000 * dt_ms;
+        uint32_t wantedCycleTime_us = 1000000 / frequency;
+        if(dt_us < wantedCycleTime_us) {
+            const uint32_t neededSleepTime = (wantedCycleTime_us - dt_us) / 1000;
+            sleep_ms(neededSleepTime);
         }
     }
 }
