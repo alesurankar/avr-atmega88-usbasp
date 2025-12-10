@@ -1,5 +1,5 @@
 #include <util/delay.h>
-#include "Dimming.hpp"
+#include "Dimming.h"
 
 
 Dimming::Dimming()

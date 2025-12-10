@@ -1,5 +1,5 @@
 #include <util/delay.h>
-#include "Blinking.hpp"
+#include "Blinking.h"
 
 // public section
 Blinking::Blinking()
