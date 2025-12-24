@@ -9,7 +9,7 @@ void adc_init(uint8_t channel) {
 
     // Enable ADC and set prescaler 128 → ADC clock 62.5 kHz
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-}
+} 
 
 // Blocking read from ADC5
 uint16_t adc_read() {
