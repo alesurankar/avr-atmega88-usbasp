@@ -1,33 +1,46 @@
+#pragma once
 #include <avr/io.h>
 
-void adc_init(uint8_t channel) {
-    // Select AVcc as reference and choose channel
-    ADMUX = (1 << REFS0) | (channel & 0x0F);
 
-    // Disable digital input on selected channel
-    DIDR0 |= (1 << channel);
+class Adc
+{
+public:
+    enum class Reference 
+    {
+        AREF  = 0,
+        AVCC  = (1 << REFS0),
+        INTERNAL_1V1 = (1 << REFS1) | (1 << REFS0)
+    };
+    void Init(Reference ref = Reference::AVCC)
+    {
+        // Set reference voltage
+        ADMUX = static_cast<uint8_t>(ref);
 
-    // Enable ADC and set prescaler 128 → ADC clock 62.5 kHz
-    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-} 
+        // Enable ADC, prescaler = 128 (16MHz → 125kHz, 8MHz → 62.5kHz)
+        ADCSRA = (1 << ADEN)
+            | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+    }
+    uint16_t Read(uint8_t channel)
+    {
+        channel &= 0x07; // limit to ADC0–ADC7
 
-// Blocking read from ADC5
-uint16_t adc_read() {
-    ADCSRA |= (1 << ADSC);            // Start conversion
+        // Select channel without touching reference bits
+        ADMUX = (ADMUX & 0xF0) | channel;
 
-    while (ADCSRA & (1 << ADSC)) {}   // Wait until ADSC = 0
+        // Disable digital input on this ADC pin
+        DIDR0 |= (1 << channel);
 
-    uint8_t low  = ADCL;              // MUST read low first
-    uint8_t high = ADCH;
+        // Start conversion
+        ADCSRA |= (1 << ADSC);
+        while (ADCSRA & (1 << ADSC));
 
-    return (high << 8) | low;         // Combine 10-bit value
-}
+        uint8_t low  = ADCL;
+        uint8_t high = ADCH;
 
-// Convert raw ADC to voltage in millivolts (mV)
-uint16_t adc_to_millivolts(uint16_t adc_value) {
-    // V = (ADC / 1023) * 5000 mV
-    // multiplied first to avoid float
-    return (adc_value * 5000UL) / 1023;
-}
-
-
+        return (high << 8) | low;
+    }
+uint16_t ToMillivolts(uint16_t adc, uint16_t vref_mv = 5000)
+    {
+        return (adc * vref_mv) / 1023;
+    }
+};
